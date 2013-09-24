@@ -1,19 +1,19 @@
 <?php
 /** 
  * mm_ddResizeImage
- * @version 1.3.3 (2013-07-09)
+ * @version 1.3.4 (2013-07-19)
  * 
  * @description A widget for ManagerManager plugin that allows image size to be changed (TV) so it is possible to create a little preview (thumb).
  * 
  * @uses phpThumb lib 1.7.11-201108081537-beta (http://phpthumb.sourceforge.net/).
- * @uses сниппет ddGetMultipleField 2.10.1 snippet (if mm_ddMultipleFields fields unparse is required).
+ * @uses сниппет ddGetMultipleField 2.16.2 snippet (if mm_ddMultipleFields fields unparse is required).
  * 
  * @events OnBeforeDocFormSave.
  * 
- * @todo replaceFieldVal doesn`t work if $multipleField == 1!
+ * @note replaceFieldVal doesn`t work if $multipleField == 1!
  * 
  * @param $tvs {comma separated string} - The names of TVs for which the widget is applied. @required
- * @param $roles {comma separated string} -  	The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: '' (для всех ролей).
+ * @param $roles {comma separated string} -	The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: '' (для всех ролей).
  * @param $templates {comma separated string} - The templates for which the widget is applied (empty value means all templates). Default: '' (для всех шаблонов).
  * @param $width {integer} - Width of the image being created (in px). Empty value means width calculating automatically according to height. At least one of the two parameters must be defined. @required
  * @param $height {integer} - Height of the image being created (in px). Empty value means height calculating automatically according to width. At least one of the two parameters must be defined. @required
@@ -28,7 +28,7 @@
  * @param $num {integer} - The number of the string that will be proccessed (for mm_ddMultipleFields). Default: 'all'.
  * @param $allowEnlargement {0; 1} - Allow output enlargement. Default: 1.
  * 
- * @link http://code.divandesign.biz/modx/mm_ddresizeimage/1.3.3
+ * @link http://code.divandesign.biz/modx/mm_ddresizeimage/1.3.4
  * 
  * @copyright 2013, DivanDesign
  * http://www.DivanDesign.ru
