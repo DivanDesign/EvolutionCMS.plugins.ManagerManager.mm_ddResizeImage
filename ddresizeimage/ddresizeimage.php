@@ -184,6 +184,11 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 							//Полный путь изображения
 							$imageFullPath = pathinfo($base_path.$image);
 							
+							//Если имя файла уже заканчивается на суффикс (необходимо при $replaceFieldVal == 1), не будем его добавлять
+							if (substr($imageFullPath['filename'], strlen($suffix) * -1) == $suffix){
+								$suffix = '';
+							}
+							
 							//Имя нового изображения
 							$newImageName = $imageFullPath['filename'].$suffix.'.'.$imageFullPath['extension'];
 						
