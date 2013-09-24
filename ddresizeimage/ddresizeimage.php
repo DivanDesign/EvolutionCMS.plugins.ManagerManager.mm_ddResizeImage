@@ -48,6 +48,9 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 			//Вычислим размеры оригинаольного изображения
 			$originalImg = array();
 			list($originalImg['width'], $originalImg['height']) = getimagesize($thumbData['originalImage']);
+
+			//Если хотя бы один из размеров оригинала оказался нулевым (например, это не изображение) — на(\s?)бок
+			if ($originalImg['width'] == 0 || $originalImg['height'] == 0){return;}
 			
 			//Пропрорции реального изображения
 			$originalImg['ratio'] = $originalImg['width'] / $originalImg['height'];
