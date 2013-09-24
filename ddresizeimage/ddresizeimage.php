@@ -48,7 +48,7 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 			//Вычислим размеры оригинаольного изображения
 			$originalImg = array();
 			list($originalImg['width'], $originalImg['height']) = getimagesize($thumbData['originalImage']);
-
+			
 			//Если хотя бы один из размеров оригинала оказался нулевым (например, это не изображение) — на(\s?)бок
 			if ($originalImg['width'] == 0 || $originalImg['height'] == 0){return;}
 			
@@ -164,8 +164,11 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 							'format' => 'JSON',
 							'colNum' => $colNum
 						));
-
-						if ($num == 'all'){
+						
+						//Если пришла пустота (ни одного изображения заполнено не было)
+						if (trim($images) == ''){
+							$images = array();
+						}else if ($num == 'all'){
 							$images = json_decode($images, true);
 						}else{
 							$images = array(trim(stripcslashes($images), '\'\"'));
@@ -210,8 +213,8 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 								'allowEnlargement' => $allowEnlargement
 							));
 							
-							//Если нужно заменить оригинальное значение TV на вновь созданное
-							if ($replaceFieldVal){
+							//Если нужно заменить оригинальное значение TV на вновь созданное и это не $multipleField
+							if ($replaceFieldVal && !$multipleField){
 								$tmplvars[$tv['id']][1] = dirname($tmplvars[$tv['id']][1]).'/'.$newImageName;
 							}
 						}
