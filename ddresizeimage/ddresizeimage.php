@@ -156,6 +156,14 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 					if ($multipleField){
 						//Получим массив изображений
 						$images = $modx->runSnippet('ddGetMultipleField', array(
+							'string' => $image,
+							'rowDelimiter' => $splY,
+							'colDelimiter' => $splX,
+							'startRow' => ($num == 'all' ? 0 : $num),
+							'totalRows' => ($num == 'all' ? 'all' : 1),
+							'outputFormat' => 'JSON',
+							'columns' => $colNum,
+							//For backward compatibility with < 3.0b
 							'field' => $image,
 							'splY' => $splY,
 							'splX' => $splX,
