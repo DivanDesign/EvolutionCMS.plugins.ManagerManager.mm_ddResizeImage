@@ -134,8 +134,8 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 	){
 		global $mm_current_page, $tmplvars;
 		
-		//Получаем tv изображений для данного шаблона
-		$tvs = tplUseTvs($mm_current_page['template'], $tvs, 'image', 'id,name');
+		//Получаем необходимые tv для данного шаблона (т.к. в mm_ddMultipleFields тип может быть любой, получаем все, а не только изображения)
+		$tvs = tplUseTvs($mm_current_page['template'], $tvs, '', 'id,name');
 		
 		//Если что-то есть
 		if (is_array($tvs) && count($tvs) > 0){
