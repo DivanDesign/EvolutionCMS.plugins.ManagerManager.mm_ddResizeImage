@@ -143,10 +143,8 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 			$replaceFieldVal = ($replaceFieldVal == '1') ? true : false;
 			$multipleField = ($multipleField == '1') ? true : false;
 			
-			$base_path = $modx->config['base_path'];
-			
 			//Подключаем phpThumb
-			require_once $base_path.'assets/plugins/managermanager/widgets/ddresizeimage/phpthumb.class.php';
+			require_once $modx->config['base_path'].'assets/plugins/managermanager/widgets/ddresizeimage/phpthumb.class.php';
 			
 			//Перебираем их
 			foreach ($tvs as $tv){
@@ -193,9 +191,9 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 						if (strpos($image, '/') === 0) $image = substr($image, 1);
 						
 						//На всякий случай проверим, что файл существует
-						if (file_exists($base_path.$image)){
+						if (file_exists($modx->config['base_path'].$image)){
 							//Полный путь изображения
-							$imageFullPath = pathinfo($base_path.$image);
+							$imageFullPath = pathinfo($modx->config['base_path'].$image);
 							
 							//Если имя файла уже заканчивается на суффикс (необходимо при $replaceFieldVal == 1), не будем его добавлять
 							if (substr($imageFullPath['filename'], strlen($suffix) * -1) == $suffix){
@@ -218,7 +216,7 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 								//Формируем новое имя изображения (полный путь)
 								'thumbName' => $imageFullPath['dirname'].'/'.$newImageName,
 								//Ссылка на оригинальное изображение
-								'originalImage' => $base_path.$image,
+								'originalImage' => $modx->config['base_path'].$image,
 								//Разрешить ли увеличение изображения
 								'allowEnlargement' => $allowEnlargement
 							));
