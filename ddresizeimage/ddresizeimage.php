@@ -20,6 +20,7 @@
  * @param $params['croppingMode'] {'0'|'1'|'crop_resized'|'fill_sized'} — Cropping status. 0 — cropping is not required; 1— cropping is required (proportions won`t be saved); 'crop_resized' — the image will be resized and cropped; 'fill_sized' — the image will be resized with propotions saving, blank spaze will be filled with «background» color. Default: 'crop_resized'.
  * @param $params['backgroundColor'] {string} — Background color. It matters if cropping equals 'fill_resized'. Default: '#ffffff'.
  * @param $params['allowEnlargement'] {0|1} — Allow output enlargement. Default: 1.
+ * @param $params['quality'] {integer} — Output image quality level. Default: $modx->getConfig('jpegQuality').
  * @param $params['replaceDocFieldVal'] {0|1} — TV values rewriting status. When this parameter equals 1 then tv values are replaced by the names of the created images. It doesn`t work if multipleField = 1. Default: 0.
  * @param $params['ddMultipleField_isUsed'] {0|1} — Multiple field status (for mm_ddMultipleFields). Default: '0';
  * @param $params['ddMultipleField_columnNumber'] {integer} — The number of the column in which the image is located (for mm_ddMultipleFields). Default: 0.
@@ -38,6 +39,9 @@
  */
 
 function mm_ddResizeImage($params){
+	global $modx;
+	$e = &$modx->Event;
+	
 	//For backward compatibility
 	if (func_num_args() > 1){
 		//Convert ordered list of params to named
@@ -72,6 +76,7 @@ function mm_ddResizeImage($params){
 		'croppingMode' => 'crop_resized',
 		'backgroundColor' => '#FFFFFF',
 		'allowEnlargement' => 1,
+		'quality' => $modx->getConfig('jpegQuality'),
 		'replaceDocFieldVal' => 0,
 		'ddMultipleField_isUsed' => 0,
 		'ddMultipleField_columnNumber' => 0,
@@ -81,9 +86,6 @@ function mm_ddResizeImage($params){
 		'roles' => '',
 		'templates' => ''
 	], (array) $params);
-	
-	global $modx;
-	$e = &$modx->Event;
 	
 	if(!function_exists('ddCreateThumb')){
 		/**
@@ -100,6 +102,7 @@ function mm_ddResizeImage($params){
 		 * @param $thumbData['allowEnlargement'] {0|1} — Разрешить ли увеличение изображения. @required
 		 * @param $thumbData['croppingMode'] {'0'|'1'|'crop_resized'|'fill_sized'} — Режим обрезания. @required
 		 * @param $thumbData['backgroundColor'] {string} — Фон превьюшки (может понадобиться для заливки пустых мест). @required
+		 * @param $thumbData['quality'] {integer} — Output image quality level. @required
 		 * 
 		 * @return {void}
 		 */
@@ -138,8 +141,8 @@ function mm_ddResizeImage($params){
 			$thumb->setParameter('config_output_format', null);
 			//Путь к оригиналу
 			$thumb->setSourceFilename($thumbData['originalImage']);
-			//Качество (для JPEG) = 100
-			$thumb->setParameter('q', '100');
+			//Качество (для JPEG)
+			$thumb->setParameter('q', $thumbData['quality']);
 			//Разрешить ли увеличивать изображение
 			$thumb->setParameter('aoe', $thumbData['allowEnlargement']);
 			
@@ -287,7 +290,9 @@ function mm_ddResizeImage($params){
 								//Ссылка на оригинальное изображение
 								'originalImage' => $modx->config['base_path'].$image,
 								//Разрешить ли увеличение изображения
-								'allowEnlargement' => $params->allowEnlargement
+								'allowEnlargement' => $params->allowEnlargement,
+								//Output image quality level
+								'quality' => $params->quality
 							]);
 							
 							//Если нужно заменить оригинальное значение TV на вновь созданное и это не $params->ddMultipleField_isUsed
