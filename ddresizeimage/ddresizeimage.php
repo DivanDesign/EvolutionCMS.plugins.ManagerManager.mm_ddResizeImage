@@ -5,6 +5,7 @@
  * 
  * @desc A widget for ManagerManager plugin that allows image size to be changed (TV) so it is possible to create a little preview (thumb).
  * 
+ * @uses PHP >= 5.4.
  * @uses MODXEvo.snippet.ddGetMultipleField => 3.0b (if mm_ddMultipleFields fields unparse is required).
  * @uses phpThumb lib 1.7.11-201108081537-beta (http://phpthumb.sourceforge.net/).
  * 
@@ -57,7 +58,7 @@ function mm_ddResizeImage(
 	if(!function_exists('ddCreateThumb')){
 		/**
 		 * ddCreateThumb
-		 * @version 1.0 (2016-11-01)
+		 * @version 1.0.1 (2016-11-01)
 		 * 
 		 * @desc Делает превьюшку.
 		 * 
@@ -74,7 +75,7 @@ function mm_ddResizeImage(
 		 */
 		function ddCreateThumb($thumbData){
 			//Вычислим размеры оригинаольного изображения
-			$originalImg = array();
+			$originalImg = [];
 			list($originalImg['width'], $originalImg['height']) = getimagesize($thumbData['originalImage']);
 			
 			//Если хотя бы один из размеров оригинала оказался нулевым (например, это не изображение) — на(\s?)бок
@@ -193,7 +194,7 @@ function mm_ddResizeImage(
 					//Если это множественное поле
 					if ($multipleField){
 						//Получим массив изображений
-						$images = $modx->runSnippet('ddGetMultipleField', array(
+						$images = $modx->runSnippet('ddGetMultipleField', [
 							'string' => $image,
 							'rowDelimiter' => $splY,
 							'colDelimiter' => $splX,
@@ -209,19 +210,19 @@ function mm_ddResizeImage(
 							'count' => ($num == 'all' ? 'all' : 1),
 							'format' => 'JSON',
 							'colNum' => $colNum
-						));
+						]);
 						
 						//Если пришла пустота (ни одного изображения заполнено не было)
 						if (trim($images) == ''){
-							$images = array();
+							$images = [];
 						}else if ($num == 'all'){
 							$images = json_decode($images, true);
 						}else{
-							$images = array(trim(stripcslashes($images), '\'\"'));
+							$images = [trim(stripcslashes($images), '\'\"')];
 						}
 					}else{
 						//Запишем в массив одно изображение
-						$images = array($image);
+						$images = [$image];
 					}
 					
 					foreach ($images as $image){
@@ -242,7 +243,7 @@ function mm_ddResizeImage(
 							$newImageName = $imageFullPath['filename'].$suffix.'.'.$imageFullPath['extension'];
 							
 							//Делаем превьюшку
-							ddCreateThumb(array(
+							ddCreateThumb([
 								//Ширина превьюшки
 								'width' => $width,
 								//Высота превьюшки
@@ -257,7 +258,7 @@ function mm_ddResizeImage(
 								'originalImage' => $modx->config['base_path'].$image,
 								//Разрешить ли увеличение изображения
 								'allowEnlargement' => $allowEnlargement
-							));
+							]);
 							
 							//Если нужно заменить оригинальное значение TV на вновь созданное и это не $multipleField
 							if ($replaceFieldVal && !$multipleField){
