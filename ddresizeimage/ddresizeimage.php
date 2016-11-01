@@ -228,13 +228,15 @@ function mm_ddResizeImage($params){
 					if ($params->ddMultipleField_isUsed){
 						//Получим массив изображений
 						$images = $modx->runSnippet('ddGetMultipleField', [
-							'string' => $image,
+							'inputString' => $image,
 							'rowDelimiter' => $params->ddMultipleField_rowDelimiter,
 							'colDelimiter' => $params->ddMultipleField_colDelimiter,
 							'startRow' => ($params->ddMultipleField_rowNumber == 'all' ? 0 : $params->ddMultipleField_rowNumber),
 							'totalRows' => ($params->ddMultipleField_rowNumber == 'all' ? 'all' : 1),
 							'outputFormat' => 'JSON',
 							'columns' => $params->ddMultipleField_columnNumber,
+							//For backward compatibility with < 3.3
+							'string' => $image,
 							//For backward compatibility with < 3.0b
 							'field' => $image,
 							'splY' => $params->ddMultipleField_rowDelimiter,
