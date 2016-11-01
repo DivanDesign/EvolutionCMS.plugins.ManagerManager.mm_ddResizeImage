@@ -1,30 +1,30 @@
 <?php
-/** 
+/**
  * mm_ddResizeImage
  * @version 1.3.6 (2014-12-25)
  * 
  * @desc A widget for ManagerManager plugin that allows image size to be changed (TV) so it is possible to create a little preview (thumb).
  * 
+ * @uses MODXEvo.snippet.ddGetMultipleField => 3.0b (if mm_ddMultipleFields fields unparse is required).
  * @uses phpThumb lib 1.7.11-201108081537-beta (http://phpthumb.sourceforge.net/).
- * @uses сниппет ddGetMultipleField 3.0b snippet (if mm_ddMultipleFields fields unparse is required).
  * 
  * @note replaceFieldVal doesn`t work if $multipleField == 1!
  * 
- * @param $tvs {comma separated string} - The names of TVs for which the widget is applied. @required
- * @param $roles {comma separated string} -	The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: '' (to all roles).
- * @param $templates {comma separated string} - The templates for which the widget is applied (empty value means all templates). Default: '' (to all templates).
- * @param $width {integer} - Width of the image being created (in px). Empty value means width calculating automatically according to height. At least one of the two parameters must be defined. @required
- * @param $height {integer} - Height of the image being created (in px). Empty value means height calculating automatically according to width. At least one of the two parameters must be defined. @required
- * @param $cropping {string} - Cropping status. 0 — cropping is not required; 1— cropping is required (proportions won`t be saved); 'crop_resized' — the image will be resized and cropped; 'fill_sized' — the image will be resized with propotions saving, blank spaze will be filled with «background» color. Default: 'crop_resized'.
- * @param $suffix {string} - The suffix for the images being created. Its empty value makes initial images to be rewritten! Default: '_ddthumb'.
- * @param $replaceFieldVal {0; 1} - TV values rewriting status. When this parameter equals 1 then tv values are replaced by the names of the created images. It doesn`t work if multipleField = 1. Default: 0.
- * @param $background {string} - Background color. It matters if cropping equals 'fill_resized'. Default: '#ffffff'.
- * @param $multipleField {0; 1} - Multiple field status (for mm_ddMultipleFields). Default: '0';
- * @param $colNum {integer} - The number of the column in which the image is located (for mm_ddMultipleFields). Default: 0.
- * @param $splY {string} - The string delimiter (for mm_ddMultipleFields). Default: '||'.
- * @param $splX {string} - The column delimiter (for mm_ddMultipleFields). Default: '::'.
- * @param $num {integer} - The number of the string that will be processed (for mm_ddMultipleFields). Default: 'all'.
- * @param $allowEnlargement {0; 1} - Allow output enlargement. Default: 1.
+ * @param $tvs {string_commaSeparated} — The names of TVs for which the widget is applied. @required
+ * @param $roles {string_commaSeparated} —	The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: '' (to all roles).
+ * @param $templates {string_commaSeparated} — The templates for which the widget is applied (empty value means all templates). Default: '' (to all templates).
+ * @param $width {integer} — Width of the image being created (in px). Empty value means width calculating automatically according to height. At least one of the two parameters must be defined. @required
+ * @param $height {integer} — Height of the image being created (in px). Empty value means height calculating automatically according to width. At least one of the two parameters must be defined. @required
+ * @param $cropping {'0'|'1'|'crop_resized'|'fill_sized'} — Cropping status. 0 — cropping is not required; 1— cropping is required (proportions won`t be saved); 'crop_resized' — the image will be resized and cropped; 'fill_sized' — the image will be resized with propotions saving, blank spaze will be filled with «background» color. Default: 'crop_resized'.
+ * @param $suffix {string} — The suffix for the images being created. Its empty value makes initial images to be rewritten! Default: '_ddthumb'.
+ * @param $replaceFieldVal {0|1} — TV values rewriting status. When this parameter equals 1 then tv values are replaced by the names of the created images. It doesn`t work if multipleField = 1. Default: 0.
+ * @param $background {string} — Background color. It matters if cropping equals 'fill_resized'. Default: '#ffffff'.
+ * @param $multipleField {0|1} — Multiple field status (for mm_ddMultipleFields). Default: '0';
+ * @param $colNum {integer} — The number of the column in which the image is located (for mm_ddMultipleFields). Default: 0.
+ * @param $splY {string} — The string delimiter (for mm_ddMultipleFields). Default: '||'.
+ * @param $splX {string} — The column delimiter (for mm_ddMultipleFields). Default: '::'.
+ * @param $num {integer} — The number of the row that will be processed (for mm_ddMultipleFields). Default: 'all'.
+ * @param $allowEnlargement {0|1} — Allow output enlargement. Default: 1.
  * 
  * @event OnBeforeDocFormSave.
  * 
@@ -34,15 +34,43 @@
  * http://www.DivanDesign.biz
  */
 
-function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', $height = '', $cropping = 'crop_resized', $suffix = '_ddthumb', $replaceFieldVal = 0, $background = '#FFFFFF', $multipleField = 0, $colNum = 0, $splY = '||', $splX = '::', $num = 'all', $allowEnlargement = 1){
+function mm_ddResizeImage(
+	$tvs = '',
+	$roles = '',
+	$templates = '',
+	$width = '',
+	$height = '',
+	$cropping = 'crop_resized',
+	$suffix = '_ddthumb',
+	$replaceFieldVal = 0,
+	$background = '#FFFFFF',
+	$multipleField = 0,
+	$colNum = 0,
+	$splY = '||',
+	$splX = '::',
+	$num = 'all',
+	$allowEnlargement = 1
+){
 	global $modx;
 	$e = &$modx->Event;
 	
 	if(!function_exists('ddCreateThumb')){
 		/**
-		 * Делает превьюшку
+		 * ddCreateThumb
+		 * @version 1.0 (2016-11-01)
 		 * 
-		 * @param $thumbData {array}
+		 * @desc Делает превьюшку.
+		 * 
+		 * @param $thumbData {array_associative} — Параметры. @required
+		 * @param $thumbData['originalImage'] {string} — Адрес оригинального изображения. @required
+		 * @param $thumbData['width'] {integer} — Ширина превьюшки. @required
+		 * @param $thumbData['height'] {integer} — Высота превьюшки. @required
+		 * @param $thumbData['thumbName'] {string} — Имя превьюшки. @required
+		 * @param $thumbData['allowEnlargement'] {0|1} — Разрешить ли увеличение изображения. @required
+		 * @param $thumbData['cropping'] {'0'|'1'|'crop_resized'|'fill_sized'} — Режим обрезания. @required
+		 * @param $thumbData['backgroundColor'] {string} — Фон превьюшки (может понадобиться для заливки пустых мест). @required
+		 * 
+		 * @return {void}
 		 */
 		function ddCreateThumb($thumbData){
 			//Вычислим размеры оригинаольного изображения
@@ -129,7 +157,11 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 	
 	//Проверим, чтобы было нужное событие, чтобы были заполнены обязательные параметры и что правило подходит под роль
 	if ($e->name == 'OnBeforeDocFormSave' &&
-		$tvs != '' && ($width != '' || $height != '') &&
+		$tvs != '' &&
+		(
+			$width != '' ||
+			$height != ''
+		) &&
 		useThisRule($roles, $templates)
 	){
 		global $mm_current_page, $tmplvars;
@@ -138,7 +170,10 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 		$tvs = tplUseTvs($mm_current_page['template'], $tvs, '', 'id,name');
 		
 		//Если что-то есть
-		if (is_array($tvs) && count($tvs) > 0){
+		if (
+			is_array($tvs) &&
+			count($tvs) > 0
+		){
 			//Обработка параметров
 			$replaceFieldVal = ($replaceFieldVal == '1') ? true : false;
 			$multipleField = ($multipleField == '1') ? true : false;
@@ -149,7 +184,10 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 			//Перебираем их
 			foreach ($tvs as $tv){
 				//Если в значении tv что-то есть
-				if (isset($tmplvars[$tv['id']]) && trim($tmplvars[$tv['id']][1]) != ''){
+				if (
+					isset($tmplvars[$tv['id']]) &&
+					trim($tmplvars[$tv['id']][1]) != ''
+				){
 					$image = trim($tmplvars[$tv['id']][1]);
 					
 					//Если это множественное поле
@@ -188,7 +226,7 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 					
 					foreach ($images as $image){
 						//Если есть лишний слэш в начале, убьём его
-						if (strpos($image, '/') === 0) $image = substr($image, 1);
+						if (strpos($image, '/') === 0){$image = substr($image, 1);}
 						
 						//На всякий случай проверим, что файл существует
 						if (file_exists($modx->config['base_path'].$image)){
@@ -202,7 +240,7 @@ function mm_ddResizeImage($tvs = '', $roles = '', $templates = '', $width = '', 
 							
 							//Имя нового изображения
 							$newImageName = $imageFullPath['filename'].$suffix.'.'.$imageFullPath['extension'];
-						
+							
 							//Делаем превьюшку
 							ddCreateThumb(array(
 								//Ширина превьюшки
