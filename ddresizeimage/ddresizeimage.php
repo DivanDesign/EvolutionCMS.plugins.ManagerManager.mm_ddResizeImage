@@ -39,6 +39,7 @@
 
 function mm_ddResizeImage($params){
 	global $modx;
+	
 	$e = &$modx->Event;
 	
 	//For backward compatibility
@@ -89,7 +90,7 @@ function mm_ddResizeImage($params){
 	if(!function_exists('ddCreateThumb')){
 		/**
 		 * ddCreateThumb
-		 * @version 1.0.2 (2016-11-01)
+		 * @version 1.0.3 (2018-07-16)
 		 * 
 		 * @desc Делает превьюшку.
 		 * 
@@ -108,21 +109,33 @@ function mm_ddResizeImage($params){
 		function ddCreateThumb($thumbData){
 			//Вычислим размеры оригинаольного изображения
 			$originalImg = [];
-			list($originalImg['width'], $originalImg['height']) = getimagesize($thumbData['originalImage']);
+			list(
+				$originalImg['width'],
+				$originalImg['height']
+			) = getimagesize($thumbData['originalImage']);
 			
 			//Если хотя бы один из размеров оригинала оказался нулевым (например, это не изображение) — на(\s?)бок
-			if ($originalImg['width'] == 0 || $originalImg['height'] == 0){return;}
+			if (
+				$originalImg['width'] == 0 ||
+				$originalImg['height'] == 0
+			){return;}
 			
 			//Пропрорции реального изображения
 			$originalImg['ratio'] = $originalImg['width'] / $originalImg['height'];
 			
 			//Если по каким-то причинам высота не задана
-			if ($thumbData['height'] == '' || $thumbData['height'] == 0){
+			if (
+				$thumbData['height'] == '' ||
+				$thumbData['height'] == 0
+			){
 				//Вычислим соответственно пропорциям
 				$thumbData['height'] = $thumbData['width'] / $originalImg['ratio'];
 			}
 			//Если по каким-то причинам ширина не задана
-			if ($thumbData['width'] == '' || $thumbData['width'] == 0){
+			if (
+				$thumbData['width'] == '' ||
+				$thumbData['width'] == 0
+			){
 				//Вычислим соответственно пропорциям
 				$thumbData['width'] = $thumbData['height'] * $originalImg['ratio'];
 			}
@@ -137,47 +150,87 @@ function mm_ddResizeImage($params){
 			
 			$thumb = new phpThumb();
 			//зачистка формата файла на выходе
-			$thumb->setParameter('config_output_format', null);
+			$thumb->setParameter(
+				'config_output_format',
+				null
+			);
 			//Путь к оригиналу
 			$thumb->setSourceFilename($thumbData['originalImage']);
 			//Качество (для JPEG)
-			$thumb->setParameter('q', $thumbData['quality']);
+			$thumb->setParameter(
+				'q',
+				$thumbData['quality']
+			);
 			//Разрешить ли увеличивать изображение
-			$thumb->setParameter('aoe', $thumbData['allowEnlargement']);
+			$thumb->setParameter(
+				'aoe',
+				$thumbData['allowEnlargement']
+			);
 			
 			//Если нужно просто обрезать
 			if($thumbData['croppingMode'] == '1'){
 				//Ширина превьюшки
-				$thumb->setParameter('sw', $thumbData['width']);
+				$thumb->setParameter(
+					'sw',
+					$thumbData['width']
+				);
 				//Высота превьюшки
-				$thumb->setParameter('sh', $thumbData['height']);
+				$thumb->setParameter(
+					'sh',
+					$thumbData['height']
+				);
 				
 				//Если ширина оригинального изображения больше
 				if ($originalImg['width'] > $thumbData['width']){
 					//Позиция по оси x оригинального изображения (чтобы было по центру)
-					$thumb->setParameter('sx', ($originalImg['width'] - $thumbData['width']) / 2);
+					$thumb->setParameter(
+						'sx',
+						($originalImg['width'] - $thumbData['width']) / 2
+					);
 				}
 				
 				//Если высота оригинального изображения больше
 				if ($originalImg['height'] > $thumbData['height']){
 					//Позиция по оси y оригинального изображения (чтобы было по центру)
-					$thumb->setParameter('sy', ($originalImg['height'] - $thumbData['height']) / 2);
+					$thumb->setParameter(
+						'sy',
+						($originalImg['height'] - $thumbData['height']) / 2
+					);
 				}
 			}else{
 				//Ширина превьюшки
-				$thumb->setParameter('w', $thumbData['width']);
+				$thumb->setParameter(
+					'w',
+					$thumbData['width']
+				);
 				//Высота превьюшки
-				$thumb->setParameter('h', $thumbData['height']);
+				$thumb->setParameter(
+					'h',
+					$thumbData['height']
+				);
 				
 				//Если нужно уменьшить + отрезать
 				if($thumbData['croppingMode'] == 'crop_resized'){
-					$thumb->setParameter('zc', '1');
+					$thumb->setParameter(
+						'zc',
+						'1'
+					);
 				//Если нужно пропорционально уменьшить, заполнив поля цветом
 				}else if($thumbData['croppingMode'] == 'fill_resized'){
 					//Устанавливаем фон (без решётки)
-					$thumb->setParameter('bg', str_replace('#', '', $thumbData['backgroundColor']));
+					$thumb->setParameter(
+						'bg',
+						str_replace(
+							'#',
+							'',
+							$thumbData['backgroundColor']
+						)
+					);
 					//Превьюшка должна точно соответствовать размеру и находиться по центру (недостающие области зальются цветом)
-					$thumb->setParameter('far', 'c');
+					$thumb->setParameter(
+						'far',
+						'c'
+					);
 				}
 			}
 			
@@ -195,12 +248,20 @@ function mm_ddResizeImage($params){
 			$params->width != '' ||
 			$params->height != ''
 		) &&
-		useThisRule($params->roles, $params->templates)
+		useThisRule(
+			$params->roles,
+			$params->templates
+		)
 	){
 		global $mm_current_page, $tmplvars;
 		
 		//Получаем необходимые tv для данного шаблона (т.к. в mm_ddMultipleFields тип может быть любой, получаем все, а не только изображения)
-		$params->fields = tplUseTvs($mm_current_page['template'], $params->fields, '', 'id,name');
+		$params->fields = tplUseTvs(
+			$mm_current_page['template'],
+			$params->fields,
+			'',
+			'id,name'
+		);
 		
 		//Если что-то есть
 		if (
@@ -226,33 +287,42 @@ function mm_ddResizeImage($params){
 					//Если это множественное поле
 					if ($params->ddMultipleField_isUsed){
 						//Получим массив изображений
-						$images = $modx->runSnippet('ddGetMultipleField', [
-							'inputString' => $image,
-							'rowDelimiter' => $params->ddMultipleField_rowDelimiter,
-							'colDelimiter' => $params->ddMultipleField_colDelimiter,
-							'startRow' => ($params->ddMultipleField_rowNumber == 'all' ? 0 : $params->ddMultipleField_rowNumber),
-							'totalRows' => ($params->ddMultipleField_rowNumber == 'all' ? 'all' : 1),
-							'outputFormat' => 'JSON',
-							'columns' => $params->ddMultipleField_columnNumber,
-							//For backward compatibility with < 3.3
-							'string' => $image,
-							//For backward compatibility with < 3.0b
-							'field' => $image,
-							'splY' => $params->ddMultipleField_rowDelimiter,
-							'splX' => $params->ddMultipleField_colDelimiter,
-							'num' => ($params->ddMultipleField_rowNumber == 'all' ? 0 : $params->ddMultipleField_rowNumber),
-							'count' => ($params->ddMultipleField_rowNumber == 'all' ? 'all' : 1),
-							'format' => 'JSON',
-							'colNum' => $params->ddMultipleField_columnNumber
-						]);
+						$images = $modx->runSnippet(
+							'ddGetMultipleField',
+							[
+								'inputString' => $image,
+								'rowDelimiter' => $params->ddMultipleField_rowDelimiter,
+								'colDelimiter' => $params->ddMultipleField_colDelimiter,
+								'startRow' => ($params->ddMultipleField_rowNumber == 'all' ? 0 : $params->ddMultipleField_rowNumber),
+								'totalRows' => ($params->ddMultipleField_rowNumber == 'all' ? 'all' : 1),
+								'outputFormat' => 'JSON',
+								'columns' => $params->ddMultipleField_columnNumber,
+								//For backward compatibility with < 3.3
+								'string' => $image,
+								//For backward compatibility with < 3.0b
+								'field' => $image,
+								'splY' => $params->ddMultipleField_rowDelimiter,
+								'splX' => $params->ddMultipleField_colDelimiter,
+								'num' => ($params->ddMultipleField_rowNumber == 'all' ? 0 : $params->ddMultipleField_rowNumber),
+								'count' => ($params->ddMultipleField_rowNumber == 'all' ? 'all' : 1),
+								'format' => 'JSON',
+								'colNum' => $params->ddMultipleField_columnNumber
+							]
+						);
 						
 						//Если пришла пустота (ни одного изображения заполнено не было)
 						if (trim($images) == ''){
 							$images = [];
 						}else if ($params->ddMultipleField_rowNumber == 'all'){
-							$images = json_decode($images, true);
+							$images = json_decode(
+								$images,
+								true
+							);
 						}else{
-							$images = [trim(stripcslashes($images), '\'\"')];
+							$images = [trim(
+								stripcslashes($images),
+								'\'\"'
+							)];
 						}
 					}else{
 						//Запишем в массив одно изображение
@@ -261,7 +331,15 @@ function mm_ddResizeImage($params){
 					
 					foreach ($images as $image){
 						//Если есть лишний слэш в начале, убьём его
-						if (strpos($image, '/') === 0){$image = substr($image, 1);}
+						if (strpos(
+							$image,
+							'/'
+						) === 0){
+							$image = substr(
+								$image,
+								1
+							);
+						}
 						
 						//На всякий случай проверим, что файл существует
 						if (file_exists($modx->config['base_path'].$image)){
@@ -269,7 +347,10 @@ function mm_ddResizeImage($params){
 							$imageFullPath = pathinfo($modx->config['base_path'].$image);
 							
 							//Если имя файла уже заканчивается на суффикс (необходимо при $params->replaceDocFieldVal == 1), не будем его добавлять
-							if (substr($imageFullPath['filename'], strlen($params->filenameSuffix) * -1) == $params->filenameSuffix){
+							if (substr(
+								$imageFullPath['filename'],
+								strlen($params->filenameSuffix) * -1
+							) == $params->filenameSuffix){
 								$params->filenameSuffix = '';
 							}
 							
@@ -297,7 +378,10 @@ function mm_ddResizeImage($params){
 							]);
 							
 							//Если нужно заменить оригинальное значение TV на вновь созданное и это не $params->ddMultipleField_isUsed
-							if ($params->replaceDocFieldVal && !$params->ddMultipleField_isUsed){
+							if (
+								$params->replaceDocFieldVal &&
+								!$params->ddMultipleField_isUsed
+							){
 								$tmplvars[$field['id']][1] = dirname($tmplvars[$field['id']][1]).'/'.$newImageName;
 							}
 						}
