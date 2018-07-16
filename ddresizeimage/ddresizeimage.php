@@ -90,7 +90,7 @@ function mm_ddResizeImage($params){
 	if(!function_exists('ddCreateThumb')){
 		/**
 		 * ddCreateThumb
-		 * @version 1.1 (2018-07-16)
+		 * @version 1.1.1 (2018-07-16)
 		 * 
 		 * @desc Делает превьюшку.
 		 * 
@@ -109,21 +109,26 @@ function mm_ddResizeImage($params){
 		function ddCreateThumb($thumbData){
 			$thumbData = (object) $thumbData;
 			
+			$originalImg = (object) [
+				'width' => 0,
+				'height' => 0,
+				'ratio' => 1
+			];
+			
 			//Вычислим размеры оригинаольного изображения
-			$originalImg = [];
 			list(
-				$originalImg['width'],
-				$originalImg['height']
+				$originalImg->width,
+				$originalImg->height
 			) = getimagesize($thumbData->originalImage);
 			
 			//Если хотя бы один из размеров оригинала оказался нулевым (например, это не изображение) — на(\s?)бок
 			if (
-				$originalImg['width'] == 0 ||
-				$originalImg['height'] == 0
+				$originalImg->width == 0 ||
+				$originalImg->height == 0
 			){return;}
 			
 			//Пропрорции реального изображения
-			$originalImg['ratio'] = $originalImg['width'] / $originalImg['height'];
+			$originalImg->ratio = $originalImg->width / $originalImg->height;
 			
 			//Если по каким-то причинам высота не задана
 			if (
@@ -131,7 +136,7 @@ function mm_ddResizeImage($params){
 				$thumbData->height == 0
 			){
 				//Вычислим соответственно пропорциям
-				$thumbData->height = $thumbData->width / $originalImg['ratio'];
+				$thumbData->height = $thumbData->width / $originalImg->ratio;
 			}
 			//Если по каким-то причинам ширина не задана
 			if (
@@ -139,12 +144,12 @@ function mm_ddResizeImage($params){
 				$thumbData->width == 0
 			){
 				//Вычислим соответственно пропорциям
-				$thumbData->width = $thumbData->height * $originalImg['ratio'];
+				$thumbData->width = $thumbData->height * $originalImg->ratio;
 			}
 			
 			//Если превьюшка уже есть и имеет нужный размер, ничего делать не нужно
-			if ($originalImg['width'] == $thumbData->width &&
-				$originalImg['height'] == $thumbData->height &&
+			if ($originalImg->width == $thumbData->width &&
+				$originalImg->height == $thumbData->height &&
 				file_exists($thumbData->thumbName)
 			){
 				return;
@@ -183,20 +188,20 @@ function mm_ddResizeImage($params){
 				);
 				
 				//Если ширина оригинального изображения больше
-				if ($originalImg['width'] > $thumbData->width){
+				if ($originalImg->width > $thumbData->width){
 					//Позиция по оси x оригинального изображения (чтобы было по центру)
 					$thumb->setParameter(
 						'sx',
-						($originalImg['width'] - $thumbData->width) / 2
+						($originalImg->width - $thumbData->width) / 2
 					);
 				}
 				
 				//Если высота оригинального изображения больше
-				if ($originalImg['height'] > $thumbData->height){
+				if ($originalImg->height > $thumbData->height){
 					//Позиция по оси y оригинального изображения (чтобы было по центру)
 					$thumb->setParameter(
 						'sy',
-						($originalImg['height'] - $thumbData->height) / 2
+						($originalImg->height - $thumbData->height) / 2
 					);
 				}
 			}else{
