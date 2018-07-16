@@ -17,7 +17,7 @@
  * @param $params['width'] {integer} — Width of the image being created (in px). Empty value means width calculating automatically according to height. At least one of the two parameters must be defined. @required
  * @param $params['height'] {integer} — Height of the image being created (in px). Empty value means height calculating automatically according to width. At least one of the two parameters must be defined. @required
  * @param $params['filenameSuffix'] {string} — The suffix for the images being created. Its empty value makes initial images to be rewritten! Default: '_ddthumb'.
- * @param $params['croppingMode'] {'0'|'1'|'crop_resized'|'fill_sized'} — Cropping status. 0 — cropping is not required; 1— cropping is required (proportions won`t be saved); 'crop_resized' — the image will be resized and cropped; 'fill_sized' — the image will be resized with propotions saving, blank spaze will be filled with «background» color. Default: 'crop_resized'.
+ * @param $params['transformMode'] {'resize'|'crop'|'resizeAndCrop'|'resizeAndFill'} — Cropping status. 'resize' — resize without cropping; 'crop' — cropping without resize (proportions won`t be saved); 'resizeAndCrop' — the image will be resized then cropped; 'resizeAndFill' — the image will be resized with propotions saving, blank space will be filled with “$params['backgroundColor']”. Default: 'resizeAndCrop'.
  * @param $params['backgroundColor'] {string} — Background color. It matters if cropping equals 'fill_resized'. Default: '#ffffff'.
  * @param $params['allowEnlargement'] {0|1} — Allow output enlargement. Default: 1.
  * @param $params['quality'] {integer} — Output image quality level. Default: $modx->getConfig('jpegQuality').
@@ -53,7 +53,7 @@ function mm_ddResizeImage($params){
 				'templates',
 				'width',
 				'height',
-				'croppingMode',
+				'transformMode',
 				'filenameSuffix',
 				'replaceDocFieldVal',
 				'backgroundColor',
@@ -67,13 +67,26 @@ function mm_ddResizeImage($params){
 		]);
 	}
 	
+	$params = (array) $params;
+	
+	//For backward compatibility
+	$params = array_merge(
+		$params,
+		ddTools::verifyRenamedParams(
+			$params,
+			[
+				'transformMode' => 'croppingMode'
+			]
+		)
+	);
+	
 	//Defaults
 	$params = (object) array_merge([
 // 		'fields' => '',
 		'width' => '',
 		'height' => '',
 		'filenameSuffix' => '_ddthumb',
-		'croppingMode' => 'crop_resized',
+		'transformMode' => 'resizeAndCrop',
 		'backgroundColor' => '#FFFFFF',
 		'allowEnlargement' => 1,
 		'quality' => $modx->getConfig('jpegQuality'),
@@ -85,29 +98,48 @@ function mm_ddResizeImage($params){
 		'ddMultipleField_rowNumber' => 'all',
 		'roles' => '',
 		'templates' => ''
-	], (array) $params);
+	], $params);
+	
+	//For backward compatibility
+	switch ($params->transformMode){
+		case '0':
+			$params->transformMode = 'resize';
+		break;
+		
+		case '1':
+			$params->transformMode = 'crop';
+		break;
+		
+		case 'crop_resized':
+			$params->transformMode = 'resizeAndCrop';
+		break;
+		
+		case 'fill_sized':
+			$params->transformMode = 'resizeAndFill';
+		break;
+	}
 	
 	if(!function_exists('ddCreateThumb')){
 		/**
 		 * ddCreateThumb
-		 * @version 1.1.1 (2018-07-16)
+		 * @version 2.0 (2018-07-16)
 		 * 
 		 * @desc Делает превьюшку.
 		 * 
-		 * @param $thumbData {array_associative|stdClass} — Параметры. @required
-		 * @param $thumbData['originalImage'] {string} — Адрес оригинального изображения. @required
-		 * @param $thumbData['width'] {integer} — Ширина превьюшки. @required
-		 * @param $thumbData['height'] {integer} — Высота превьюшки. @required
-		 * @param $thumbData['thumbName'] {string} — Имя превьюшки. @required
-		 * @param $thumbData['allowEnlargement'] {0|1} — Разрешить ли увеличение изображения. @required
-		 * @param $thumbData['croppingMode'] {'0'|'1'|'crop_resized'|'fill_sized'} — Режим обрезания. @required
-		 * @param $thumbData['backgroundColor'] {string} — Фон превьюшки (может понадобиться для заливки пустых мест). @required
-		 * @param $thumbData['quality'] {integer} — Output image quality level. @required
+		 * @param $params {array_associative|stdClass} — The object of params. @required
+		 * @param $params['sourceFullPathName'] {string} — Адрес оригинального изображения. @required
+		 * @param $params['outputFullPathName'] {string} — Адрес результирующего изображения. @required
+		 * @param $params['transformMode'] {'resize'|'crop'|'resizeAndCrop'|'resizeAndFill'} — Режим преобразования. @required
+		 * @param $params['width'] {integer} — Ширина результирующего изображения. Если задать один размер — второй будет вычислен автоматически исходя из пропорций оригинального изображения. @required
+		 * @param $params['height'] {integer} — Высота результирующего изображения. Если задать один размер — второй будет вычислен автоматически исходя из пропорций оригинального изображения. @required
+		 * @param $params['backgroundColor'] {string} — Фон результирующего изображения (может понадобиться для заливки пустых мест). @required
+		 * @param $params['allowEnlargement'] {0|1} — Разрешить ли увеличение изображения? @required
+		 * @param $params['quality'] {integer} — Output image quality level. @required
 		 * 
 		 * @return {void}
 		 */
-		function ddCreateThumb($thumbData){
-			$thumbData = (object) $thumbData;
+		function ddCreateThumb($params){
+			$params = (object) $params;
 			
 			$originalImg = (object) [
 				'width' => 0,
@@ -119,7 +151,7 @@ function mm_ddResizeImage($params){
 			list(
 				$originalImg->width,
 				$originalImg->height
-			) = getimagesize($thumbData->originalImage);
+			) = getimagesize($params->sourceFullPathName);
 			
 			//Если хотя бы один из размеров оригинала оказался нулевым (например, это не изображение) — на(\s?)бок
 			if (
@@ -132,25 +164,25 @@ function mm_ddResizeImage($params){
 			
 			//Если по каким-то причинам высота не задана
 			if (
-				$thumbData->height == '' ||
-				$thumbData->height == 0
+				$params->height == '' ||
+				$params->height == 0
 			){
 				//Вычислим соответственно пропорциям
-				$thumbData->height = $thumbData->width / $originalImg->ratio;
+				$params->height = $params->width / $originalImg->ratio;
 			}
 			//Если по каким-то причинам ширина не задана
 			if (
-				$thumbData->width == '' ||
-				$thumbData->width == 0
+				$params->width == '' ||
+				$params->width == 0
 			){
 				//Вычислим соответственно пропорциям
-				$thumbData->width = $thumbData->height * $originalImg->ratio;
+				$params->width = $params->height * $originalImg->ratio;
 			}
 			
 			//Если превьюшка уже есть и имеет нужный размер, ничего делать не нужно
-			if ($originalImg->width == $thumbData->width &&
-				$originalImg->height == $thumbData->height &&
-				file_exists($thumbData->thumbName)
+			if ($originalImg->width == $params->width &&
+				$originalImg->height == $params->height &&
+				file_exists($params->outputFullPathName)
 			){
 				return;
 			}
@@ -162,75 +194,75 @@ function mm_ddResizeImage($params){
 				null
 			);
 			//Путь к оригиналу
-			$thumb->setSourceFilename($thumbData->originalImage);
+			$thumb->setSourceFilename($params->sourceFullPathName);
 			//Качество (для JPEG)
 			$thumb->setParameter(
 				'q',
-				$thumbData->quality
+				$params->quality
 			);
 			//Разрешить ли увеличивать изображение
 			$thumb->setParameter(
 				'aoe',
-				$thumbData->allowEnlargement
+				$params->allowEnlargement
 			);
 			
 			//Если нужно просто обрезать
-			if($thumbData->croppingMode == '1'){
+			if($params->transformMode == 'crop'){
 				//Ширина превьюшки
 				$thumb->setParameter(
 					'sw',
-					$thumbData->width
+					$params->width
 				);
 				//Высота превьюшки
 				$thumb->setParameter(
 					'sh',
-					$thumbData->height
+					$params->height
 				);
 				
 				//Если ширина оригинального изображения больше
-				if ($originalImg->width > $thumbData->width){
+				if ($originalImg->width > $params->width){
 					//Позиция по оси x оригинального изображения (чтобы было по центру)
 					$thumb->setParameter(
 						'sx',
-						($originalImg->width - $thumbData->width) / 2
+						($originalImg->width - $params->width) / 2
 					);
 				}
 				
 				//Если высота оригинального изображения больше
-				if ($originalImg->height > $thumbData->height){
+				if ($originalImg->height > $params->height){
 					//Позиция по оси y оригинального изображения (чтобы было по центру)
 					$thumb->setParameter(
 						'sy',
-						($originalImg->height - $thumbData->height) / 2
+						($originalImg->height - $params->height) / 2
 					);
 				}
 			}else{
 				//Ширина превьюшки
 				$thumb->setParameter(
 					'w',
-					$thumbData->width
+					$params->width
 				);
 				//Высота превьюшки
 				$thumb->setParameter(
 					'h',
-					$thumbData->height
+					$params->height
 				);
 				
 				//Если нужно уменьшить + отрезать
-				if($thumbData->croppingMode == 'crop_resized'){
+				if($params->transformMode == 'resizeAndCrop'){
 					$thumb->setParameter(
 						'zc',
 						'1'
 					);
 				//Если нужно пропорционально уменьшить, заполнив поля цветом
-				}else if($thumbData->croppingMode == 'fill_resized'){
+				}else if($params->transformMode == 'resizeAndFill'){
 					//Устанавливаем фон (без решётки)
 					$thumb->setParameter(
 						'bg',
 						str_replace(
 							'#',
 							'',
-							$thumbData->backgroundColor
+							$params->backgroundColor
 						)
 					);
 					//Превьюшка должна точно соответствовать размеру и находиться по центру (недостающие области зальются цветом)
@@ -244,7 +276,7 @@ function mm_ddResizeImage($params){
 			//Создаём превьюшку
 			$thumb->GenerateThumbnail();
 			//Сохраняем в файл
-			$thumb->RenderToFile($thumbData->thumbName);
+			$thumb->RenderToFile($params->outputFullPathName);
 		}
 	}
 	
@@ -373,11 +405,11 @@ function mm_ddResizeImage($params){
 								//Фон превьюшки (может понадобиться для заливки пустых мест)
 								'backgroundColor' => $params->backgroundColor,
 								//Режим обрезания
-								'croppingMode' => $params->croppingMode,
+								'transformMode' => $params->transformMode,
 								//Формируем новое имя изображения (полный путь)
-								'thumbName' => $imageFullPath['dirname'].'/'.$newImageName,
+								'outputFullPathName' => $imageFullPath['dirname'].'/'.$newImageName,
 								//Ссылка на оригинальное изображение
-								'originalImage' => $modx->config['base_path'].$image,
+								'sourceFullPathName' => $modx->config['base_path'].$image,
 								//Разрешить ли увеличение изображения
 								'allowEnlargement' => $params->allowEnlargement,
 								//Output image quality level
