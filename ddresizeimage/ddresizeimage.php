@@ -90,11 +90,11 @@ function mm_ddResizeImage($params){
 	if(!function_exists('ddCreateThumb')){
 		/**
 		 * ddCreateThumb
-		 * @version 1.0.3 (2018-07-16)
+		 * @version 1.1 (2018-07-16)
 		 * 
 		 * @desc Делает превьюшку.
 		 * 
-		 * @param $thumbData {array_associative} — Параметры. @required
+		 * @param $thumbData {array_associative|stdClass} — Параметры. @required
 		 * @param $thumbData['originalImage'] {string} — Адрес оригинального изображения. @required
 		 * @param $thumbData['width'] {integer} — Ширина превьюшки. @required
 		 * @param $thumbData['height'] {integer} — Высота превьюшки. @required
@@ -107,12 +107,14 @@ function mm_ddResizeImage($params){
 		 * @return {void}
 		 */
 		function ddCreateThumb($thumbData){
+			$thumbData = (object) $thumbData;
+			
 			//Вычислим размеры оригинаольного изображения
 			$originalImg = [];
 			list(
 				$originalImg['width'],
 				$originalImg['height']
-			) = getimagesize($thumbData['originalImage']);
+			) = getimagesize($thumbData->originalImage);
 			
 			//Если хотя бы один из размеров оригинала оказался нулевым (например, это не изображение) — на(\s?)бок
 			if (
@@ -125,25 +127,25 @@ function mm_ddResizeImage($params){
 			
 			//Если по каким-то причинам высота не задана
 			if (
-				$thumbData['height'] == '' ||
-				$thumbData['height'] == 0
+				$thumbData->height == '' ||
+				$thumbData->height == 0
 			){
 				//Вычислим соответственно пропорциям
-				$thumbData['height'] = $thumbData['width'] / $originalImg['ratio'];
+				$thumbData->height = $thumbData->width / $originalImg['ratio'];
 			}
 			//Если по каким-то причинам ширина не задана
 			if (
-				$thumbData['width'] == '' ||
-				$thumbData['width'] == 0
+				$thumbData->width == '' ||
+				$thumbData->width == 0
 			){
 				//Вычислим соответственно пропорциям
-				$thumbData['width'] = $thumbData['height'] * $originalImg['ratio'];
+				$thumbData->width = $thumbData->height * $originalImg['ratio'];
 			}
 			
 			//Если превьюшка уже есть и имеет нужный размер, ничего делать не нужно
-			if ($originalImg['width'] == $thumbData['width'] &&
-				$originalImg['height'] == $thumbData['height'] &&
-				file_exists($thumbData['thumbName'])
+			if ($originalImg['width'] == $thumbData->width &&
+				$originalImg['height'] == $thumbData->height &&
+				file_exists($thumbData->thumbName)
 			){
 				return;
 			}
@@ -155,75 +157,75 @@ function mm_ddResizeImage($params){
 				null
 			);
 			//Путь к оригиналу
-			$thumb->setSourceFilename($thumbData['originalImage']);
+			$thumb->setSourceFilename($thumbData->originalImage);
 			//Качество (для JPEG)
 			$thumb->setParameter(
 				'q',
-				$thumbData['quality']
+				$thumbData->quality
 			);
 			//Разрешить ли увеличивать изображение
 			$thumb->setParameter(
 				'aoe',
-				$thumbData['allowEnlargement']
+				$thumbData->allowEnlargement
 			);
 			
 			//Если нужно просто обрезать
-			if($thumbData['croppingMode'] == '1'){
+			if($thumbData->croppingMode == '1'){
 				//Ширина превьюшки
 				$thumb->setParameter(
 					'sw',
-					$thumbData['width']
+					$thumbData->width
 				);
 				//Высота превьюшки
 				$thumb->setParameter(
 					'sh',
-					$thumbData['height']
+					$thumbData->height
 				);
 				
 				//Если ширина оригинального изображения больше
-				if ($originalImg['width'] > $thumbData['width']){
+				if ($originalImg['width'] > $thumbData->width){
 					//Позиция по оси x оригинального изображения (чтобы было по центру)
 					$thumb->setParameter(
 						'sx',
-						($originalImg['width'] - $thumbData['width']) / 2
+						($originalImg['width'] - $thumbData->width) / 2
 					);
 				}
 				
 				//Если высота оригинального изображения больше
-				if ($originalImg['height'] > $thumbData['height']){
+				if ($originalImg['height'] > $thumbData->height){
 					//Позиция по оси y оригинального изображения (чтобы было по центру)
 					$thumb->setParameter(
 						'sy',
-						($originalImg['height'] - $thumbData['height']) / 2
+						($originalImg['height'] - $thumbData->height) / 2
 					);
 				}
 			}else{
 				//Ширина превьюшки
 				$thumb->setParameter(
 					'w',
-					$thumbData['width']
+					$thumbData->width
 				);
 				//Высота превьюшки
 				$thumb->setParameter(
 					'h',
-					$thumbData['height']
+					$thumbData->height
 				);
 				
 				//Если нужно уменьшить + отрезать
-				if($thumbData['croppingMode'] == 'crop_resized'){
+				if($thumbData->croppingMode == 'crop_resized'){
 					$thumb->setParameter(
 						'zc',
 						'1'
 					);
 				//Если нужно пропорционально уменьшить, заполнив поля цветом
-				}else if($thumbData['croppingMode'] == 'fill_resized'){
+				}else if($thumbData->croppingMode == 'fill_resized'){
 					//Устанавливаем фон (без решётки)
 					$thumb->setParameter(
 						'bg',
 						str_replace(
 							'#',
 							'',
-							$thumbData['backgroundColor']
+							$thumbData->backgroundColor
 						)
 					);
 					//Превьюшка должна точно соответствовать размеру и находиться по центру (недостающие области зальются цветом)
@@ -237,7 +239,7 @@ function mm_ddResizeImage($params){
 			//Создаём превьюшку
 			$thumb->GenerateThumbnail();
 			//Сохраняем в файл
-			$thumb->RenderToFile($thumbData['thumbName']);
+			$thumb->RenderToFile($thumbData->thumbName);
 		}
 	}
 	
