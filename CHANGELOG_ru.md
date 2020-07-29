@@ -1,6 +1,23 @@
 # (MODX)EvolutionCMS.plugins.ManagerManager.mm_ddResizeImage changelog
 
 
+## Версия 1.6 (2020-07-29)
+* \+ Добавлена поддержка GIF.
+* \* Параметры:
+	* \+ `$params->watermarkImageFullPathName`: Новый параметр. Задавайте, если вам нужно нанести водяные знаки на изображения.
+	* \- `$params->croppingMode`: Параметр удалён (с обратной совместимостью).
+	* \+ `$params->transformMode`: Новый параметр (с обратной совместимостью к `$params->croppingMode`).
+* \* Refactoring:
+		* \* Используется `\DDTools\FilesTools::modifyImage`.
+		* \* Используется `\DDTools\ObjectTools::isPropExists` вместо `isset`.
+		* \* Используется `\DDTools\ObjectTools::extend` вместо `array_merge`.
+* \+ README.
+* \+ README_ru.
+* \+ CHANGELOG.
+* \+ CHANGELOG_ru.
+* \+ Composer.json.
+
+
 ## Версия 1.5 (2017-04-17)
 * \* Совестимость с PHP 7.x.
 

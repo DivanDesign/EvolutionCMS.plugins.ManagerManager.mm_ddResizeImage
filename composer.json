@@ -1,6 +1,6 @@
 {
 	"name": "dd/evolutioncms-plugins-managermanager-mm_ddresizeimage",
-	"version": "1.5",
+	"version": "1.6",
 	"description": "Widget for ManagerManager plugin that allows image size to be changed (TV) so it is possible to create a little preview (thumb).",
 	"keywords": [
 		"modx",

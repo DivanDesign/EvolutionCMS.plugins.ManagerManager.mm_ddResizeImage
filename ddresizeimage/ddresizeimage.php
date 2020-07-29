@@ -1,13 +1,13 @@
 <?php
 /**
  * mm_ddResizeImage
- * @version 1.5 (2017-04-17)
+ * @version 1.6 (2020-07-29)
  * 
  * @see README.md
  * 
  * @link https://code.divandesign.biz/modx/mm_ddresizeimage
  * 
- * @copyright 2012–2017 DD Group {@link https://DivanDesign.biz }
+ * @copyright 2012–2020 DD Group {@link https://DivanDesign.biz }
  */
 
 function mm_ddResizeImage($params){
