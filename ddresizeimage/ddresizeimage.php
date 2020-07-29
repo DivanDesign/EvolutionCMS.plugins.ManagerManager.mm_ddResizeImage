@@ -40,42 +40,44 @@ function mm_ddResizeImage($params){
 		]);
 	}
 	
-	$params = (array) $params;
-	
 	//For backward compatibility
-	$params = array_merge(
-		$params,
-		\ddTools::verifyRenamedParams(
+	$params = \DDTools\ObjectTools::extend([
+		'objects' => [
 			$params,
-			[
-				'transformMode' => 'croppingMode'
-			]
-		)
-	);
+			\ddTools::verifyRenamedParams(
+				$params,
+				[
+					'transformMode' => 'croppingMode'
+				]
+			)
+		]
+	]);
 	
 	//Defaults
-	$params = (object) array_merge(
-		[
-// 			'fields' => '',
-			'width' => '',
-			'height' => '',
-			'filenameSuffix' => '_ddthumb',
-			'transformMode' => 'resizeAndCrop',
-			'backgroundColor' => '#FFFFFF',
-			'allowEnlargement' => 1,
-			'quality' => $modx->getConfig('jpegQuality'),
-// 			'watermarkImageFullPathName' => '',
-			'replaceDocFieldVal' => 0,
-			'ddMultipleField_isUsed' => 0,
-			'ddMultipleField_columnNumber' => 0,
-			'ddMultipleField_rowDelimiter' => '||',
-			'ddMultipleField_colDelimiter' => '::',
-			'ddMultipleField_rowNumber' => 'all',
-			'roles' => '',
-			'templates' => ''
-		],
-		$params
-	);
+	$params = \DDTools\ObjectTools::extend([
+		'objects' => [
+			(object) [
+// 				'fields' => '',
+				'width' => '',
+				'height' => '',
+				'filenameSuffix' => '_ddthumb',
+				'transformMode' => 'resizeAndCrop',
+				'backgroundColor' => '#FFFFFF',
+				'allowEnlargement' => 1,
+				'quality' => $modx->getConfig('jpegQuality'),
+// 				'watermarkImageFullPathName' => '',
+				'replaceDocFieldVal' => 0,
+				'ddMultipleField_isUsed' => 0,
+				'ddMultipleField_columnNumber' => 0,
+				'ddMultipleField_rowDelimiter' => '||',
+				'ddMultipleField_colDelimiter' => '::',
+				'ddMultipleField_rowNumber' => 'all',
+				'roles' => '',
+				'templates' => ''
+			],
+			$params
+		]
+	]);
 	
 	//For backward compatibility
 	switch ($params->transformMode){
