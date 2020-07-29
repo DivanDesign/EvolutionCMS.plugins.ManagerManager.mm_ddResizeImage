@@ -64,6 +64,7 @@ function mm_ddResizeImage($params){
 			'backgroundColor' => '#FFFFFF',
 			'allowEnlargement' => 1,
 			'quality' => $modx->getConfig('jpegQuality'),
+// 			'watermarkImageFullPathName' => '',
 			'replaceDocFieldVal' => 0,
 			'ddMultipleField_isUsed' => 0,
 			'ddMultipleField_columnNumber' => 0,
@@ -265,8 +266,7 @@ function mm_ddResizeImage($params){
 								$imageFullPath['extension']
 							;
 							
-							//Делаем превьюшку
-							\DDTools\FilesTools::modifyImage([
+							$modifyImageParams = (object) [
 								//Ссылка на оригинальное изображение
 								'sourceFullPathName' =>
 									$modx->config['base_path'] .
@@ -290,7 +290,17 @@ function mm_ddResizeImage($params){
 								'backgroundColor' => $params->backgroundColor,
 								//Output image quality level
 								'quality' => $params->quality
-							]);
+							];
+							
+							if (\DDTools\ObjectTools::isPropExists([
+								'object' => $params,
+								'propName' => 'watermarkImageFullPathName'
+							])){
+								$modifyImageParams->watermarkImageFullPathName = $params->watermarkImageFullPathName;
+							}
+							
+							//Делаем превьюшку
+							\DDTools\FilesTools::modifyImage($modifyImageParams);
 							
 							//Если нужно заменить оригинальное значение TV на вновь созданное и это не $params->ddMultipleField_isUsed
 							if (

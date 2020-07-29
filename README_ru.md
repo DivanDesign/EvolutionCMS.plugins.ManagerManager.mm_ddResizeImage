@@ -84,6 +84,12 @@
 	* Допустимые значения: `integer`
 	* Значение по умолчанию: `$modx->getConfig('jpegQuality')`
 	
+* `$params->watermarkImageFullPathName`
+	* Desctription: Нанести водяные знаки на изображения.  
+		Вы можете передавать также относительные пути (например, `assets/images/some.jpg`), виджет автоматически добавит `base_path`, если нужно.
+	* Valid values: `string`
+	* Default value: —
+	
 * `$params->replaceDocFieldVal`
 	* Описание: Нужно ли переписывать значения в TV на имена созданных изображений?  
 		Обратите внимание, что параметр не используется, если `$params->ddMultipleField_isUsed` == `1`!
@@ -205,6 +211,18 @@ mm_ddResizeImage([
 	'transformMode' => `'resizeAndFill'`,
 	'filenameSuffix' => '',
 	'backgroundColor' => '#686868'
+]);
+```
+
+
+#### Нанести водяные знаки на изображения (`$params->watermarkImageFullPathName`)
+
+```
+mm_ddResizeImage([
+	'fields' => 'general_photo',
+	'width' => 1920,
+	'height' => 1080,
+	'watermarkImageFullPathName' => 'assets/images/logo.png'
 ]);
 ```
 

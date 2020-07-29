@@ -84,6 +84,12 @@ You may also read this documentation:
 	* Valid values: `integer`
 	* Default value: `$modx->getConfig('jpegQuality')`
 	
+* `$params->watermarkImageFullPathName`
+	* Desctription: Specify if you want to overlay your image with watermark.  
+		You can pass a relative path too (e. g. `assets/images/some.jpg`), the widget will automatically add `base_path` if needed.
+	* Valid values: `string`
+	* Default value: —
+	
 * `$params->replaceDocFieldVal`
 	* Desctription: TV values rewriting status.  
 		Note that the parameter isn't used if `$params->ddMultipleField_isUsed` == `1`!
@@ -205,6 +211,18 @@ mm_ddResizeImage([
 	'transformMode' => `'resizeAndFill'`,
 	'filenameSuffix' => '',
 	'backgroundColor' => '#686868'
+]);
+```
+
+
+#### Overlay images with watermark (`$params->watermarkImageFullPathName`)
+
+```
+mm_ddResizeImage([
+	'fields' => 'general_photo',
+	'width' => 1920,
+	'height' => 1080,
+	'watermarkImageFullPathName' => 'assets/images/logo.png'
 ]);
 ```
 
