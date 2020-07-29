@@ -98,7 +98,11 @@ function mm_ddResizeImage($params){
 	//Проверим, чтобы было нужное событие, чтобы были заполнены обязательные параметры и что правило подходит под роль
 	if (
 		$e->name == 'OnBeforeDocFormSave' &&
-		isset($params->fields) &&
+		//Required parameter
+		\DDTools\ObjectTools::isPropExists([
+			'object' => $params,
+			'propName' => 'fields'
+		]) &&
 		(
 			$params->width != '' ||
 			$params->height != ''
@@ -145,7 +149,10 @@ function mm_ddResizeImage($params){
 			){
 				//Если в значении tv что-то есть
 				if (
-					isset($tmplvars[$field['id']]) &&
+					\DDTools\ObjectTools::isPropExists([
+						'object' => $tmplvars,
+						'propName' => $field['id']
+					]) &&
 					trim($tmplvars[$field['id']][1]) != ''
 				){
 					$image = trim($tmplvars[$field['id']][1]);
