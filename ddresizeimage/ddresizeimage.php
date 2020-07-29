@@ -3,33 +3,7 @@
  * mm_ddResizeImage
  * @version 1.5 (2017-04-17)
  * 
- * @desc A widget for ManagerManager plugin that allows image size to be changed (TV) so it is possible to create a little preview (thumb).
- * 
- * @uses PHP >= 5.4
- * @uses (MODX)EvolutionCMS.plugins.ManagerManager >= 0.7
- * @uses (MODX)EvolutionCMS.snippets.ddGetMultipleField => 3.0b (if mm_ddMultipleFields fields unparse is required)
- * 
- * @note $params->replaceDocFieldVal doesn`t work if $params->ddMultipleField_isUsed == 1!
- * 
- * @param $params {stdClass|arrayAssociative} — The object of params. @required
- * @param $params->fields {stringCommaSeparated} — The names of TVs for which the widget is applied. @required
- * @param $params->width {integer} — Width of the image being created (in px). Empty value means width calculating automatically according to height. At least one of the two parameters must be defined. @required
- * @param $params->height {integer} — Height of the image being created (in px). Empty value means height calculating automatically according to width. At least one of the two parameters must be defined. @required
- * @param $params->filenameSuffix {string} — The suffix for the images being created. Its empty value makes initial images to be rewritten! Default: '_ddthumb'.
- * @param $params->transformMode {'resize'|'crop'|'resizeAndCrop'|'resizeAndFill'} — Cropping status. 'resize' — resize without cropping; 'crop' — cropping without resize (proportions won`t be saved); 'resizeAndCrop' — the image will be resized then cropped; 'resizeAndFill' — the image will be resized with propotions saving, blank space will be filled with “$params->backgroundColor”. Default: 'resizeAndCrop'.
- * @param $params->backgroundColor {string} — Background color. It matters if cropping equals 'fill_resized'. Default: '#ffffff'.
- * @param $params->allowEnlargement {0|1} — Allow output enlargement. Default: 1.
- * @param $params->quality {integer} — Output image quality level. Default: $modx->getConfig('jpegQuality').
- * @param $params->replaceDocFieldVal {0|1} — TV values rewriting status. When this parameter equals 1 then tv values are replaced by the names of the created images. It doesn`t work if multipleField = 1. Default: 0.
- * @param $params->ddMultipleField_isUsed {0|1} — Multiple field status (for mm_ddMultipleFields). Default: '0';
- * @param $params->ddMultipleField_columnNumber {integer} — The number of the column in which the image is located (for mm_ddMultipleFields). Default: 0.
- * @param $params->ddMultipleField_rowNumber {integer|'all'} — The number of the row that will be processed (for mm_ddMultipleFields). Default: 'all'.
- * @param $params->ddMultipleField_rowDelimiter {string} — The string delimiter (for mm_ddMultipleFields). Default: '||'.
- * @param $params->ddMultipleField_colDelimiter {string} — The column delimiter (for mm_ddMultipleFields). Default: '::'.
- * @param $params->roles {stringCommaSeparated} — The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: '' (to all roles).
- * @param $params->templates {stringCommaSeparated} — The templates for which the widget is applied (empty value means all templates). Default: '' (to all templates).
- * 
- * @event OnBeforeDocFormSave.
+ * @see README.md
  * 
  * @link https://code.divandesign.biz/modx/mm_ddresizeimage
  * 
