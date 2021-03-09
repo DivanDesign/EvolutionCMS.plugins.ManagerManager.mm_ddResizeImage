@@ -205,7 +205,7 @@ function mm_ddResizeImage($params){
 						//Если пришла пустота (ни одного изображения заполнено не было)
 						if (trim($images) == ''){
 							$images = [];
-						}else if ($params->ddMultipleField_rowNumber == 'all'){
+						}elseif ($params->ddMultipleField_rowNumber == 'all'){
 							$images = json_decode(
 								$images,
 								true
