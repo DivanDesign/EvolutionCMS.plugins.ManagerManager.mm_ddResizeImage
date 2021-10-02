@@ -17,7 +17,7 @@ The widget activates as documents are saved (event `OnBeforeDocFormSave`) and it
 
 ### Installation
 
-To install you must unzip the archive to `/assets/plungins/managermanager/widgets/`.
+To install you must unzip the archive to `/assets/plungins/managermanager/widgets/ddresizeimage/`.
 
 
 You may also read this documentation:
