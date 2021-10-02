@@ -163,9 +163,9 @@ function mm_ddResizeImage($params){
 					//Если это множественное поле
 					if ($params->ddMultipleField_isUsed){
 						//Получим массив изображений
-						$images = $modx->runSnippet(
-							'ddGetMultipleField',
-							[
+						$images = \DDTools\Snippet::runSnippet([
+							'name' => 'ddGetMultipleField',
+							'params' => [
 								'inputString' => $image,
 								'rowDelimiter' => $params->ddMultipleField_rowDelimiter,
 								'colDelimiter' => $params->ddMultipleField_colDelimiter,
@@ -200,7 +200,7 @@ function mm_ddResizeImage($params){
 								'format' => 'JSON',
 								'colNum' => $params->ddMultipleField_columnNumber
 							]
-						);
+						]);
 						
 						//Если пришла пустота (ни одного изображения заполнено не было)
 						if (trim($images) == ''){

@@ -9,7 +9,7 @@ The widget activates as documents are saved (event `OnBeforeDocFormSave`) and it
 
 * PHP >= 5.4
 * [(MODX)EvolutionCMS.plugins.ManagerManager](https://code.divandesign.biz/modx/managermanager) >= 0.7
-* [(MODX)EvolutionCMS.snippets.ddGetMultipleField](https://code.divandesign.biz/modx/ddgetmultipleField) >= 3.0b (if mm_ddMultipleFields fields unparse is required)
+* [(MODX)EvolutionCMS.snippets.ddGetMultipleField](https://code.divandesign.biz/modx/ddgetmultipleField) >= 3.6 (if mm_ddMultipleFields fields unparse is required)
 
 
 ## Documentation
