@@ -205,18 +205,11 @@ function mm_ddResizeImage($params){
 						//Если пришла пустота (ни одного изображения заполнено не было)
 						if (trim($images) == ''){
 							$images = [];
-						}elseif ($params->ddMultipleField_rowNumber == 'all'){
+						}else{
 							$images = json_decode(
 								$images,
 								true
 							);
-						}else{
-							$images = [
-								trim(
-									stripcslashes($images),
-									'\'\"'
-								)
-							];
 						}
 					}else{
 						//Запишем в массив одно изображение
