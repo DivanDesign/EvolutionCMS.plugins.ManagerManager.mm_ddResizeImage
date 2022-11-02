@@ -1,6 +1,10 @@
 # (MODX)EvolutionCMS.plugins.ManagerManager.mm_ddResizeImage changelog
 
 
+## Version 1.6.2 (2022-11-02)
+* \* Better compatibility with new versions of (MODX)EvolutionCMS.snippets.ddGetMultipleField.
+
+
 ## Version 1.6.1 (2021-10-02)
 * \* Attention! (MODX)EvolutionCMS.snippets.ddGetMultipleField >= 3.6 is required (if mm_ddMultipleFields fields unparse is required).
 * \* `\DDTools\Snippet::runSnippet` is used instead of `$modx->runSnippet` to run (MODX)EvolutionCMS.snippets.ddGetMultipleField without DB and eval.
