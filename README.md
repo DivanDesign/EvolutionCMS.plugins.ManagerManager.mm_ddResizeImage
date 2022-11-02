@@ -12,12 +12,9 @@ The widget activates as documents are saved (event `OnBeforeDocFormSave`) and it
 * [(MODX)EvolutionCMS.snippets.ddGetMultipleField](https://code.divandesign.biz/modx/ddgetmultipleField) >= 3.6 (if mm_ddMultipleFields fields unparse is required)
 
 
-## Documentation
+## Installation
 
-
-### Installation
-
-To install you must unzip the archive to `/assets/plungins/managermanager/widgets/`.
+To install you must unzip the archive to `/assets/plungins/managermanager/widgets/ddresizeimage/`.
 
 
 You may also read this documentation:
@@ -26,7 +23,7 @@ You may also read this documentation:
 * [(MODX)EvolutionCMS.snippets.ddGetMultipleField](https://code.divandesign.biz/modx/ddgetmultiplefield).
 
 
-### Parameters description
+## Parameters description
 
 * `$params`
 	* Desctription: Parameters, the pass-by-name style is used.
@@ -152,15 +149,15 @@ You may also read this documentation:
 	* **Required**
 
 
-### CMS events
+## CMS events
 
 * `OnBeforeDocFormSave`
 
 
-### Examples
+## Examples
 
 
-#### Creating thumbnails 200 × auto px
+### Creating thumbnails 200 × auto px
 
 The width must be equal to 200 px and the height must be calculated automatically.
 
@@ -172,7 +169,7 @@ mm_ddResizeImage([
 ```
 
 
-#### Creating thumbnails 200 × 100 px
+### Creating thumbnails 200 × 100 px
 
 The width must be equal to 200 px and the height must be equal to 100 px.
 
@@ -185,7 +182,7 @@ mm_ddResizeImage([
 ```
 
 
-#### Overwrite TV values with resized images (`$params->replaceDocFieldVal` == `1`)
+### Overwrite TV values with resized images (`$params->replaceDocFieldVal` == `1`)
 
 ```
 mm_ddResizeImage([
@@ -199,7 +196,7 @@ mm_ddResizeImage([
 The images will uploaded and after document saving the TV values was changed fom `'assets/images/some.jpg'` to `'assets/images/some_ddthumb.jpg'`.
 
 
-#### Providing the images that was uploaded to be limited to 125 × 68 px (`$params->transformMode` == `'resizeAndFill'`)
+### Providing the images that was uploaded to be limited to 125 × 68 px (`$params->transformMode` == `'resizeAndFill'`)
 
 All that is uploading must be limited to the size and when proportions does not match then blank space must be filled with `#686868` color.
 
@@ -215,7 +212,7 @@ mm_ddResizeImage([
 ```
 
 
-#### Overlay images with watermark (`$params->watermarkImageFullPathName`)
+### Overlay images with watermark (`$params->watermarkImageFullPathName`)
 
 ```
 mm_ddResizeImage([

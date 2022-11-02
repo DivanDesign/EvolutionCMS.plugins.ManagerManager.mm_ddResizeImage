@@ -12,12 +12,9 @@
 * [(MODX)EvolutionCMS.snippets.ddGetMultipleField](https://code.divandesign.biz/modx/ddgetmultipleField) >= 3.6 (if mm_ddMultipleFields fields unparse is required)
 
 
-## Документация
+## Установка
 
-
-### Установка
-
-Для установки распакуйте архив в `/assets/plungins/managermanager/widgets/`.
+Для установки распакуйте архив в `/assets/plungins/managermanager/widgets/ddresizeimage/`.
 
 
 Смотрите также документацию:
@@ -26,7 +23,7 @@
 * [(MODX)EvolutionCMS.snippets.ddGetMultipleField](https://code.divandesign.biz/modx/ddgetmultiplefield).
 
 
-### Описание параметров
+## Описание параметров
 
 * `$params`
 	* Описание: Параметры, используется стиль именованных параметров.
@@ -152,15 +149,15 @@
 	* **Required**
 
 
-### События CMS
+## События CMS
 
 * `OnBeforeDocFormSave`
 
 
-### Примеры
+## Примеры
 
 
-#### Создание превьюшек размером 200 × авто px
+### Создание превьюшек размером 200 × авто px
 
 Ширина должна быть равна 200 px, а высота должна рассчитаться автоматически соответственно оригинальным пропорциям.
 
@@ -172,7 +169,7 @@ mm_ddResizeImage([
 ```
 
 
-#### Создание превьюшек размером 200 × 100 px
+### Создание превьюшек размером 200 × 100 px
 
 Ширина должна быть равна 200 px, а высота — 100 px.
 
@@ -185,7 +182,7 @@ mm_ddResizeImage([
 ```
 
 
-#### Перезаписать значения TV созданными виджетом изображенями (`$params->replaceDocFieldVal` == `1`)
+### Перезаписать значения TV созданными виджетом изображенями (`$params->replaceDocFieldVal` == `1`)
 
 ```
 mm_ddResizeImage([
@@ -199,7 +196,7 @@ mm_ddResizeImage([
 Пользователь загрузил и вставил в TV `'assets/images/some.jpg'`, а после сохранения документа сделалась превьюшка и значение TV стало `'assets/images/some_ddthumb.jpg'`.
 
 
-#### Обеспечить, чтобы пользователи загружали изображения в TV строго размером 125 × 68 px (`$params->transformMode` == `'resizeAndFill'`)
+### Обеспечить, чтобы пользователи загружали изображения в TV строго размером 125 × 68 px (`$params->transformMode` == `'resizeAndFill'`)
 
 Всё, что загружается, должно быть пропорционально уменьшено до заданного размера, а если пропорции не верные, то свободное пространство должно быть залито цветом `#686868`.
 
@@ -215,7 +212,7 @@ mm_ddResizeImage([
 ```
 
 
-#### Нанести водяные знаки на изображения (`$params->watermarkImageFullPathName`)
+### Нанести водяные знаки на изображения (`$params->watermarkImageFullPathName`)
 
 ```
 mm_ddResizeImage([
