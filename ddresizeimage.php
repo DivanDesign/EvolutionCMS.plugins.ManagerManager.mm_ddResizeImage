@@ -15,9 +15,9 @@ function mm_ddResizeImage($params){
 	
 	$e = &$modx->Event;
 	
-	//For backward compatibility
+	// For backward compatibility
 	if (func_num_args() > 1){
-		//Convert ordered list of params to named
+		// Convert ordered list of params to named
 		$params = \ddTools::orderedParamsToNamed([
 			'paramsList' => func_get_args(),
 			'compliance' => [
@@ -40,7 +40,7 @@ function mm_ddResizeImage($params){
 		]);
 	}
 	
-	//For backward compatibility
+	// For backward compatibility
 	$params = \DDTools\ObjectTools::extend([
 		'objects' => [
 			$params,
@@ -53,7 +53,7 @@ function mm_ddResizeImage($params){
 		]
 	]);
 	
-	//Defaults
+	// Defaults
 	$params = \DDTools\ObjectTools::extend([
 		'objects' => [
 			(object) [
@@ -79,7 +79,7 @@ function mm_ddResizeImage($params){
 		]
 	]);
 	
-	//For backward compatibility
+	// For backward compatibility
 	switch ($params->transformMode){
 		case '0':
 			$params->transformMode = 'resize';
@@ -98,10 +98,10 @@ function mm_ddResizeImage($params){
 		break;
 	}
 	
-	//Проверим, чтобы было нужное событие, чтобы были заполнены обязательные параметры и что правило подходит под роль
+	// Проверим, чтобы было нужное событие, чтобы были заполнены обязательные параметры и что правило подходит под роль
 	if (
 		$e->name == 'OnBeforeDocFormSave' &&
-		//Required parameter
+		// Required parameter
 		\DDTools\ObjectTools::isPropExists([
 			'object' => $params,
 			'propName' => 'fields'
@@ -120,7 +120,7 @@ function mm_ddResizeImage($params){
 			$tmplvars
 		;
 		
-		//Получаем необходимые tv для данного шаблона (т.к. в mm_ddMultipleFields тип может быть любой, получаем все, а не только изображения)
+		// Получаем необходимые tv для данного шаблона (т.к. в mm_ddMultipleFields тип может быть любой, получаем все, а не только изображения)
 		$params->fields = tplUseTvs(
 			$mm_current_page['template'],
 			$params->fields,
@@ -128,12 +128,12 @@ function mm_ddResizeImage($params){
 			'id,name'
 		);
 		
-		//Если что-то есть
+		// Если что-то есть
 		if (
 			is_array($params->fields) &&
 			count($params->fields) > 0
 		){
-			//Обработка параметров
+			// Обработка параметров
 			$params->replaceDocFieldVal =
 				$params->replaceDocFieldVal == '1' ?
 				true :
@@ -145,12 +145,12 @@ function mm_ddResizeImage($params){
 				false
 			;
 			
-			//Перебираем их
+			// Перебираем их
 			foreach (
 				$params->fields as
 				$field
 			){
-				//Если в значении tv что-то есть
+				// Если в значении tv что-то есть
 				if (
 					\DDTools\ObjectTools::isPropExists([
 						'object' => $tmplvars,
@@ -160,9 +160,9 @@ function mm_ddResizeImage($params){
 				){
 					$image = trim($tmplvars[$field['id']][1]);
 					
-					//Если это множественное поле
+					// Если это множественное поле
 					if ($params->ddMultipleField_isUsed){
-						//Получим массив изображений
+						// Получим массив изображений
 						$images = \DDTools\Snippet::runSnippet([
 							'name' => 'ddGetMultipleField',
 							'params' => [
@@ -181,9 +181,9 @@ function mm_ddResizeImage($params){
 								,
 								'outputFormat' => 'JSON',
 								'columns' => $params->ddMultipleField_columnNumber,
-								//For backward compatibility with < 3.3
+								// For backward compatibility with < 3.3
 								'string' => $image,
-								//For backward compatibility with < 3.0b
+								// For backward compatibility with < 3.0b
 								'field' => $image,
 								'splY' => $params->ddMultipleField_rowDelimiter,
 								'splX' => $params->ddMultipleField_colDelimiter,
@@ -202,7 +202,7 @@ function mm_ddResizeImage($params){
 							]
 						]);
 						
-						//Если пришла пустота (ни одного изображения заполнено не было)
+						// Если пришла пустота (ни одного изображения заполнено не было)
 						if (trim($images) == ''){
 							$images = [];
 						}else{
@@ -212,7 +212,7 @@ function mm_ddResizeImage($params){
 							);
 						}
 					}else{
-						//Запишем в массив одно изображение
+						// Запишем в массив одно изображение
 						$images = [$image];
 					}
 					
@@ -220,7 +220,7 @@ function mm_ddResizeImage($params){
 						$images as
 						$image
 					){
-						//Если есть лишний слэш в начале, убьём его
+						// Если есть лишний слэш в начале, убьём его
 						if (strpos(
 							$image,
 							'/'
@@ -231,18 +231,18 @@ function mm_ddResizeImage($params){
 							);
 						}
 						
-						//На всякий случай проверим, что файл существует
+						// На всякий случай проверим, что файл существует
 						if (file_exists(
 							$modx->config['base_path'] .
 							$image
 						)){
-							//Полный путь изображения
+							// Полный путь изображения
 							$imageFullPath = pathinfo(
 								$modx->config['base_path'] .
 								$image
 							);
 							
-							//Если имя файла уже заканчивается на суффикс (необходимо при $params->replaceDocFieldVal == 1), не будем его добавлять
+							// Если имя файла уже заканчивается на суффикс (необходимо при $params->replaceDocFieldVal == 1), не будем его добавлять
 							if (
 								substr(
 									$imageFullPath['filename'],
@@ -253,7 +253,7 @@ function mm_ddResizeImage($params){
 								$params->filenameSuffix = '';
 							}
 							
-							//Имя нового изображения
+							// Имя нового изображения
 							$newImageName =
 								$imageFullPath['filename'] .
 								$params->filenameSuffix .
@@ -262,28 +262,28 @@ function mm_ddResizeImage($params){
 							;
 							
 							$modifyImageParams = (object) [
-								//Ссылка на оригинальное изображение
+								// Ссылка на оригинальное изображение
 								'sourceFullPathName' =>
 									$modx->config['base_path'] .
 									$image
 								,
-								//Формируем новое имя изображения (полный путь)
+								// Формируем новое имя изображения (полный путь)
 								'outputFullPathName' =>
 									$imageFullPath['dirname'] .
 									'/' .
 									$newImageName
 								,
-								//Режим обрезания
+								// Режим обрезания
 								'transformMode' => $params->transformMode,
-								//Ширина превьюшки
+								// Ширина превьюшки
 								'width' => $params->width,
-								//Высота превьюшки
+								// Высота превьюшки
 								'height' => $params->height,
-								//Разрешить ли увеличение изображения
+								// Разрешить ли увеличение изображения
 								'allowEnlargement' => $params->allowEnlargement,
-								//Фон превьюшки (может понадобиться для заливки пустых мест)
+								// Фон превьюшки (может понадобиться для заливки пустых мест)
 								'backgroundColor' => $params->backgroundColor,
-								//Output image quality level
+								// Output image quality level
 								'quality' => $params->quality
 							];
 							
@@ -294,10 +294,10 @@ function mm_ddResizeImage($params){
 								$modifyImageParams->watermarkImageFullPathName = $params->watermarkImageFullPathName;
 							}
 							
-							//Делаем превьюшку
+							// Делаем превьюшку
 							\DDTools\FilesTools::modifyImage($modifyImageParams);
 							
-							//Если нужно заменить оригинальное значение TV на вновь созданное и это не $params->ddMultipleField_isUsed
+							// Если нужно заменить оригинальное значение TV на вновь созданное и это не $params->ddMultipleField_isUsed
 							if (
 								$params->replaceDocFieldVal &&
 								!$params->ddMultipleField_isUsed
